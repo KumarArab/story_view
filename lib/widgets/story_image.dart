@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 
 import '../utils.dart';
 import '../controller/story_controller.dart';
@@ -27,6 +29,18 @@ class ImageLoader {
     if (this.frames != null) {
       this.state = LoadState.success;
       onComplete();
+    }
+
+    if (this.url.split('.').last == 'json') {
+      this.state = LoadState.success;
+      onComplete();
+      return;
+    }
+
+    if (this.url.split('.').last == 'svg') {
+      this.state = LoadState.success;
+      onComplete();
+      return;
     }
 
     final fileStream = DefaultCacheManager().getFileStream(this.url,
@@ -68,7 +82,6 @@ class ImageLoader {
 /// forward animated media.
 class StoryImage extends StatefulWidget {
   final ImageLoader imageLoader;
-
   final BoxFit? fit;
 
   final StoryController? controller;
@@ -117,9 +130,9 @@ class StoryImageState extends State<StoryImage> {
       this._streamSubscription =
           widget.controller!.playbackNotifier.listen((playbackState) {
         // for the case of gifs we need to pause/play
-        if (widget.imageLoader.frames == null) {
-          return;
-        }
+        // if (widget.imageLoader.frames == null) {
+        //   return;
+        // }
 
         if (playbackState == PlaybackState.pause) {
           this._timer?.cancel();
@@ -182,10 +195,22 @@ class StoryImageState extends State<StoryImage> {
   Widget getContentView() {
     switch (widget.imageLoader.state) {
       case LoadState.success:
-        return RawImage(
-          image: this.currentFrame,
-          fit: widget.fit,
-        );
+        if (widget.imageLoader.url.split('.').last == 'json')
+          return Lottie.network(
+            widget.imageLoader.url,
+            fit: BoxFit.contain,
+          );
+        else if (widget.imageLoader.url.split('.').last == 'svg')
+          return SvgPicture.network(
+            widget.imageLoader.url,
+            fit: BoxFit.contain,
+          );
+        else
+          return RawImage(
+            image: this.currentFrame,
+            fit: widget.fit,
+          );
+
       case LoadState.failure:
         return Center(
             child: Text(
