@@ -6,7 +6,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
-
+import 'package:flutter/material.dart';
 import '../utils.dart';
 import '../controller/story_controller.dart';
 
@@ -83,13 +83,16 @@ class ImageLoader {
 class StoryImage extends StatefulWidget {
   final ImageLoader imageLoader;
   final BoxFit? fit;
-
+  final BoxDecoration? decoration;
   final StoryController? controller;
+  final TextStyle? textStyle;
 
   StoryImage(
     this.imageLoader, {
     Key? key,
     this.controller,
+    this.decoration,
+    this.textStyle,
     this.fit,
   }) : super(key: key ?? UniqueKey());
 
@@ -100,6 +103,7 @@ class StoryImage extends StatefulWidget {
     Map<String, dynamic>? requestHeaders,
     BoxFit fit = BoxFit.fitWidth,
     Key? key,
+    BoxDecoration? decoration,
   }) {
     return StoryImage(
         ImageLoader(
@@ -108,6 +112,7 @@ class StoryImage extends StatefulWidget {
         ),
         controller: controller,
         fit: fit,
+        decoration: decoration,
         key: key);
   }
 
@@ -181,12 +186,15 @@ class StoryImageState extends State<StoryImage> {
       return;
     }
 
-    final nextFrame = await widget.imageLoader.frames!.getNextFrame();
+    if (widget.imageLoader.url.split('.').last != 'json' &&
+        widget.imageLoader.url.split('.').last != 'svg') {
+      final nextFrame = await widget.imageLoader.frames!.getNextFrame();
 
-    this.currentFrame = nextFrame.image;
+      this.currentFrame = nextFrame.image;
 
-    if (nextFrame.duration > Duration(milliseconds: 0)) {
-      this._timer = Timer(nextFrame.duration, forward);
+      if (nextFrame.duration > Duration(milliseconds: 0)) {
+        this._timer = Timer(nextFrame.duration, forward);
+      }
     }
 
     setState(() {});
@@ -199,6 +207,7 @@ class StoryImageState extends State<StoryImage> {
           return Lottie.network(
             widget.imageLoader.url,
             fit: BoxFit.contain,
+            repeat: false,
           );
         else if (widget.imageLoader.url.split('.').last == 'svg')
           return SvgPicture.network(
@@ -238,6 +247,7 @@ class StoryImageState extends State<StoryImage> {
     return Container(
       width: double.infinity,
       height: double.infinity,
+      decoration: widget.decoration ?? BoxDecoration(),
       child: getContentView(),
     );
   }

@@ -105,16 +105,17 @@ class StoryItem {
 
   /// Factory constructor for page images. [controller] should be same instance as
   /// one passed to the `StoryView`
-  factory StoryItem.pageImage({
-    required String url,
-    required StoryController controller,
-    Key? key,
-    BoxFit imageFit = BoxFit.fitWidth,
-    String? caption,
-    bool shown = false,
-    Map<String, dynamic>? requestHeaders,
-    Duration? duration,
-  }) {
+  factory StoryItem.pageImage(
+      {required String url,
+      required StoryController controller,
+      Key? key,
+      BoxFit imageFit = BoxFit.fitWidth,
+      String? caption,
+      bool shown = false,
+      Map<String, dynamic>? requestHeaders,
+      Duration? duration,
+      BoxDecoration? decoration,
+      TextStyle? textStyle}) {
     return StoryItem(
       Container(
         key: key,
@@ -126,6 +127,7 @@ class StoryItem {
               controller: controller,
               fit: imageFit,
               requestHeaders: requestHeaders,
+              decoration: decoration,
             ),
             SafeArea(
               child: Align(
@@ -136,17 +138,17 @@ class StoryItem {
                     bottom: 24,
                   ),
                   padding: EdgeInsets.symmetric(
-                    horizontal: 24,
+                    horizontal: 32,
                     vertical: 8,
                   ),
-                  color: caption != null ? Colors.black54 : Colors.transparent,
                   child: caption != null
                       ? Text(
                           caption,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                          ),
+                          style: textStyle ??
+                              TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                              ),
                           textAlign: TextAlign.center,
                         )
                       : SizedBox(),
