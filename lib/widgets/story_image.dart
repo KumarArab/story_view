@@ -207,7 +207,6 @@ class StoryImageState extends State<StoryImage> {
           return Lottie.network(
             widget.imageLoader.url,
             fit: BoxFit.contain,
-            repeat: false,
           );
         else if (widget.imageLoader.url.split('.').last == 'svg')
           return SvgPicture.network(
