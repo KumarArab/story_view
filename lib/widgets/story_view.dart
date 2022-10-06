@@ -115,6 +115,7 @@ class StoryItem {
       Map<String, dynamic>? requestHeaders,
       Duration? duration,
       BoxDecoration? decoration,
+      Widget? captionWidget,
       TextStyle? textStyle}) {
     return StoryItem(
       Container(
@@ -129,32 +130,7 @@ class StoryItem {
               requestHeaders: requestHeaders,
               decoration: decoration,
             ),
-            SafeArea(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(
-                    bottom: 24,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 8,
-                  ),
-                  child: caption != null
-                      ? Text(
-                          caption,
-                          style: textStyle ??
-                              TextStyle(
-                                fontSize: 15,
-                                color: Colors.white,
-                              ),
-                          textAlign: TextAlign.center,
-                        )
-                      : SizedBox(),
-                ),
-              ),
-            )
+            Align(alignment: Alignment.bottomCenter, child: captionWidget),
           ],
         ),
       ),
